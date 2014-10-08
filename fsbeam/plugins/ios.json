@@ -1,0 +1,122 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "framework": {
+                "parents": {
+                    "libz.dylib": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "libc++.dylib": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "libiconv.dylib": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "AVFoundation.framework": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "AssetsLibrary.framework": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "CoreVideo.framework": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "CoreGraphics.framework": [
+                        {
+                            "xml": "false",
+                            "count": 2
+                        }
+                    ],
+                    "AudioToolbox.framework": [
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "AddressBook.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        },
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ],
+                    "AddressBookUI.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        },
+                        {
+                            "xml": "false",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"BarcodeScanner\"><param name=\"ios-package\" value=\"CDVBarcodeScanner\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Contacts\"><param name=\"ios-package\" value=\"CDVContacts\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"PickContact\"><param name=\"ios-package\" value=\"PickContact\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "com.phonegap.plugins.barcodescanner": {
+            "PACKAGE_NAME": "com.freisein.beam"
+        },
+        "org.apache.cordova.device": {
+            "PACKAGE_NAME": "com.freisein.beam"
+        },
+        "org.apache.cordova.contacts": {
+            "PACKAGE_NAME": "com.freisein.beam"
+        },
+        "com.kolwit.pickcontact": {
+            "PACKAGE_NAME": "com.freisein.beam"
+        },
+        "org.bloxlab.barcodescanner": {
+            "PACKAGE_NAME": "com.freisein.beam"
+        }
+    },
+    "dependent_plugins": {}
+}

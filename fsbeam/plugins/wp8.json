@@ -1,0 +1,68 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"BarcodeScanner\"><param name=\"wp-package\" value=\"BarcodeScanner\" /></feature>",
+                            "count": 2
+                        },
+                        {
+                            "xml": "<feature name=\"PickContact\"><param name=\"wp-package\" value=\"PickContact\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Contacts\"><param name=\"wp-package\" value=\"Contacts\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"wp-package\" value=\"Device\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "Properties/WMAppManifest.xml": {
+                "parents": {
+                    "/Deployment/App/Capabilities": [
+                        {
+                            "xml": "<Capability Name=\"ID_CAP_ISV_CAMERA\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<Capability Name=\"ID_CAP_CONTACTS\" />",
+                            "count": 2
+                        },
+                        {
+                            "xml": "<Capability Name=\"ID_CAP_IDENTITY_DEVICE\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "org.bloxlab.barcodescanner": {
+            "PACKAGE_NAME": "{6A23FE0D-982E-48DE-8D09-C719646C72D2}"
+        },
+        "com.kolwit.pickcontact": {
+            "PACKAGE_NAME": "{514D81FC-D799-450B-8B01-FD0F21D306B4}"
+        },
+        "com.phonegap.plugins.barcodescanner": {
+            "PACKAGE_NAME": "{514D81FC-D799-450B-8B01-FD0F21D306B4}"
+        },
+        "org.apache.cordova.contacts": {
+            "PACKAGE_NAME": "{514D81FC-D799-450B-8B01-FD0F21D306B4}"
+        },
+        "org.apache.cordova.device": {
+            "PACKAGE_NAME": "{514D81FC-D799-450B-8B01-FD0F21D306B4}"
+        }
+    },
+    "dependent_plugins": {}
+}

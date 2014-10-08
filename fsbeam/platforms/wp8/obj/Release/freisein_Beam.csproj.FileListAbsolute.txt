@@ -1,0 +1,16 @@
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\ApplicationIcon.png
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\Background.png
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\com.freisein.beam.dll
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\com.freisein.beam.pdb
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\com.freisein.beam.dll.CodeAnalysisLog.xml
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\com.freisein.beam.dll.lastcodeanalysissucceeded
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\AppManifest.xaml
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\Properties\WMAppManifest.xml
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\Bin\Release\CordovaAppProj_Release_AnyCPU.xap
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\App.g.cs
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\cordovalib\CordovaView.g.cs
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\MainPage.g.cs
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\com.freisein.beam.g.resources
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\com.freisein.beam.dll
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\com.freisein.beam.pdb
+\\vmware-host\Shared Folders\app\fsbeam\platforms\wp8\obj\Release\XapCacheFile.xml

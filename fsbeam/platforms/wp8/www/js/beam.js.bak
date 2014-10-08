@@ -1,0 +1,1090 @@
+var IS_WEB = true;
+var FS_HOST = 'http://test.freisein.de';
+
+function initApp() {
+    if(!localStorage.auth) {
+        Number.show();
+    } else {
+        Fs.getJ('BeamBalance', function(o) {
+            if(o.balance) Home.show(); else Number.show();
+        });
+    }
+}
+
+
+Fs = (function() {
+	var self = {
+        loading: function(state) {
+            if(typeof state === 'undefined') state = true;
+            $('#loading-overlay, #loading').toggle(state);
+        },
+
+        get: function(url, args, onDone) {
+			if(typeof args === 'function') {
+				onDone = args;
+				args = null;
+            }
+            
+			$.get(FS_HOST+'/r/'+url, args, onDone);
+		},
+
+        getJ: function(url, args, onDone) {
+			if(typeof args === 'function') {
+				onDone = args;
+				args = null;
+			}
+			
+            
+			$.get(FS_HOST+'/r/'+url, args, onDone, 'json');
+		},
+
+        postJ: function(url, args, onDone) {
+			if(typeof args === 'function') {
+				onDone = args;
+				args = null;
+			}
+			
+			$.post(FS_HOST+'/r/'+url, args, onDone, 'json');
+		}
+    }
+	return self;
+})();
+
+
+Number = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#number');
+
+            $('#number-enter').show();
+
+            $('#number-enter form', self.$me).submit(function(e) {
+                pd(e);
+                
+                Fs.postJ('BeamConfirmNumber', {
+                    number: $('#number-enter input').val()
+                }, function(o) {
+                    
+                });
+                
+                $('.enter_code', self.$me).hide();
+                
+                $('#number-enter').addClass('slideOut');
+                window.setTimeout(function() {
+                    $('#number-enter').hide();
+                    $('#number-confirm').show().addClass('slideIn');
+                    window.setTimeout(function() {
+                        $('#number-confirm').find('input').focus();
+                    }, 200);
+                }, 200);
+
+            });
+            
+            $('.enter_code', self.$me).click(function() {
+                if($('#number-enter input').val().length < 5) {
+                    jAlert("Gib zuerst noch deine Nummer ein.");
+                    return;
+                }
+                
+                $(this).hide();
+                $('#number-enter form', self.$me).submit();
+            });
+
+            $('#number-confirm form', self.$me).submit(function(e) {
+                pd(e);
+                
+                Fs.postJ('BeamConfirmNumber', {
+                    number: $('#number-enter input').val(),
+                    pin: $(this).find('input').val()
+                }, function(o) {
+                    if(o && o.auth) {
+                        localStorage.auth = o.auth;
+                        self.close();
+                    } else {
+                       $('#number-confirm form').effect('shake', { distance: 10, times: 2 }, 350);
+                    }
+                });    
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function() {
+            if(!self.isInit) self.init();
+            Fx.slideIn(self.$me);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me, function() {
+                Home.show();
+            });
+        },
+	}
+	return self;
+})();
+
+Module = (function() {
+	var self = {
+	}
+	return self;
+})();
+
+
+Home = (function() {
+	var self = {
+        isInit: false,
+        balance: 0,
+        
+        init: function() {
+            self.$me = $('#home');
+            $('button', self.$me).click(function() {
+                self.close();
+                var target = $(this).attr('target');
+                window[$(this).attr('target')].show();
+                Header.show(target, $('#'+target.toLowerCase()).find('.title').html());
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function() {
+            if(!self.isInit) self.init();
+            $('#fs-head').show();
+            Fx.slideIn(self.$me);
+            Header.hide();
+            
+            Fs.getJ('BeamBalance', function(o) {
+                if(!o) balance = 0;
+                self.balance = o.balance;
+                
+                self.$me.find('.balance span').html(formatAmount(o.balance));
+                self.$me.find('.balance').removeClass('plus minus').addClass(o.balance > 0 ? 'plus' : '');
+            });
+            
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me, function() {
+                //$('#fs-head').hide();
+            });
+        }
+	}
+	return self;
+})();
+
+Header = (function() {
+	var self = {
+        $me: $('body>header'),
+        module: null,
+        parent_module: null,
+        parent_title: null,
+        data: null,
+        
+        show: function(module, title, onBack) {
+            title && self.$me.find('h1').html(title);
+
+            if(onBack) {
+                self.parent_module = self.module;
+                self.parent_title = self.title;
+            }
+
+            self.module = module;
+            self.title = title;
+            //self.$me.show();
+            Fx.in('slideIn', self.$me);
+            
+            
+            self.$me.find('a').off().click(function(e) {
+                window[self.module].close();
+                
+                if(onBack) {
+                    self.show(self.parent_module, self.parent_title);
+                    onBack();
+                } else {
+                    self.hide();
+                    Home.show();
+                }
+            });
+        },
+        
+        hide: function() {
+            Fx.out('slideOut', self.$me);
+        },
+        
+        back: function() {
+            if(self.$me.is(':visible')) self.$me.find('a').click();
+        }
+	}
+	return self;
+})();
+
+News = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#news');
+            
+//            syncContacts();
+//            window.setTimeout(function() {
+//                syncContacts();
+//            }, 1000);
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            
+            syncContacts();
+            
+            Fs.getJ('BeamNews', function(os) {                
+                self.$me.find('ul').empty();
+                $('.empty', self.$me).toggle(!os.length);
+                
+                for(var i = 0; i < os.length; i++) {
+                    var o = os[i];
+                    $li = $('#t-news').clone().attr('id', '');
+
+//                    if(o.type == 1) $li.find('.type div').addClass('rot180');
+//                    $li.find('.type div').addClass(o.type == 0 ? 'send' : 
+
+                    $li.find('.name').text(o.name);
+                    $li.find('.amount span').text(formatAmount(o.amount));
+
+                    $li.appendTo(self.$me.find('ul')).show();
+                }
+            });
+            
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+Transactions = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#transactions');
+            moment.lang('de');  
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            
+            Fs.getJ('BeamTransactions', function(os) {
+                self.$me.find('table').first().empty();
+                $('.empty', self.$me).toggle(!os.length);
+                
+                for(var i = 0; i < os.length; i++) {
+                    var o = os[i];
+                    $li = $('#t-transaction').clone().attr('id', '');
+                    
+                    if(o.type == 1) $li.find('.type div').addClass('rot180');
+                    $li.find('.type div').addClass(o.type == 0 ? 'send' : 'receive');
+                    
+                    $li.find('.amount span').html(formatAmount(o.amount));
+                    $li.find('.user').text(o.user);
+                    $li.find('.date').html(moment.unix(o.created2).fromNow());
+                    
+                    $li.appendTo(self.$me.find('table').first()).show();
+                }
+            });
+            
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+Send = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#send-way');
+            
+            $('button', self.$me).click(function() {
+                Fx.slideOut(self.$me);
+                var target = $(this).attr('target');
+                window[$(this).attr('target')].show();
+                
+                Header.show(
+                    target,
+                    $('#'+target.toLowerCase().replace(/_/, '-')).find('.title').html(),
+                    function() {
+                        Send.show();
+                    }
+                );
+            });
+                
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+Send_Qr = (function() {
+    var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#send-qr');
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            
+            cordova.plugins.barcodeScanner.scan(
+                function(result) {
+                    self.close();
+                  
+                    if(!result.cancelled && result.text) {
+                        Send_Confirm.show(result.text);
+                    }
+                },
+                function (error) {
+                    self.close(function() {
+                        Home.show();
+                    });
+                }
+            );
+            
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+    }
+    return self;
+})();
+
+Send_Id = (function() {
+    var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#send-id');
+            
+            $('input', self.$me).keyup(function(e) {
+                var code = e.keyCode || e.which;
+                var bid = $(this).val();
+                if((bid.length == 3 || bid.length == 7) && code != 8) {
+                    $(this).val(bid+'-');
+                }
+            });
+
+            $('button', self.$me).click(function(e) {
+                pd(e);
+                
+                var bid = $('input', self.$me).val();
+                bid = bid.replace(/[^a-zA-Z0-9]/, '');
+                if(!bid) return;
+                
+                self.close(function() {
+                    Send_Confirm.show(bid);
+                });
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            
+            Fx.slideIn(self.$me, function() {
+                self.$me.find('input').val('').focus();
+                f && f();
+            });
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+    }
+    return self;
+})();
+
+Send_Confirm = (function() {
+    var self = {
+        isInit: false,
+        bid: null,
+        
+        init: function() {
+            self.$me = $('#send-confirm');
+
+            $('button.ok', self.$me).click(function(e) {
+                pd(e);
+                
+                Fs.loading();
+                
+                Fs.postJ('BeamSend', {
+                    bid: self.bid,
+                    action: 'confirm'
+                }, function(o) {
+                    Fs.loading(false);
+                    
+                    if(o) {
+                        self.close(function() {
+                            Send_Done.show(o);
+                        });
+                    } else {
+                        jAlert('Die Überweisung wurde nicht ausgeführt!');
+                    }
+                });
+                
+            });
+            
+            $('button.cancel', self.$me).click(function(e) {
+                pd(e);
+                Header.hide();
+                self.close(function() {                    
+                    Home.show();
+                });
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(bid, f) {
+            if(!self.isInit) self.init();
+            
+            Fs.postJ('BeamSend', { bid: bid }, function(o) {
+                if(o) {
+                    self.bid = o.bid;
+
+                    $('.amount span', self.$me).text(formatAmount(o.amount));
+                    $('.to').text(o.name ? o.name +' '+ o.number : o.number);
+
+                    Header.module = 'Send_Confirm';
+                    Fx.slideIn(self.$me, f);
+                } else {
+                    jAlert('Keine Zahlung gefunden.');
+                    
+                    self.close(function() {
+                        Home.show();
+                    });
+                }
+            });                
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+    }
+    return self;
+})();
+
+Send_Contact = (function() {
+    var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#send-contact');
+
+            $('button', self.$me).click(function(e) {
+                pd(e);
+                
+                var number = $('input', self.$me).val();
+                if(!number) return;
+                
+                self.close();
+                
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            
+            window.plugins.PickContact.chooseContact(function (o) {
+                setTimeout(function () {
+//                    alert(o.displayName + " " + o.emailAddress + " " + o.phoneNr );
+                    
+                    var name = o.displayName;
+                    var number = o.phoneNr;
+                    number = number.replace(/^0(1)/, '+49$1');
+                    
+                    if(!number.match(/^\+49(14|15|16|17)/)) {
+                        jAlert('Bitte einen Kontakt mit Handynummer auswählen.');
+                        
+                        Header.back();
+                        return;
+                    }
+                    
+                    self.close(function() {
+                        Send_Amount.show(function(amount) {
+                            Fs.loading();
+
+                            Fs.postJ('BeamSend', {
+                                name: name,
+                                number: number,
+                                amount: amount
+                            }, function(o) {
+                                Fs.loading(false);
+
+                                Send_Confirm.show({
+                                    bid: o.bid
+                                });
+                            });
+                        });
+                    });
+                    
+                }, 1);
+            });         
+            
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+    }
+    return self;
+})();
+
+Send_Amount = (function() {
+	var self = {
+        show: function(f) {
+            Amount.show(function(amount) {
+                f(amount);
+            }, Home.balance, 'Nicht genügend Guthaben!');
+            
+            Header.module = 'Send_Amount';
+        },
+        
+        close: function() {
+            Amount.close();
+        }
+	}
+	return self;
+})();
+
+Send_Done = (function() {
+    var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#send-done');
+
+            $('button', self.$me).click(function(e) {
+                pd(e);
+                Header.hide();
+                self.close(function() {
+                    Home.show();
+                });
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(o, f) {
+            if(!self.isInit) self.init();
+            Header.module = 'Send_Done';
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+    }
+    return self;
+})();
+
+Receive = (function() {
+	var self = {
+        show: function(f) {
+            Receive_Amount.show(f);
+        },
+        
+        close: function(f) {
+            Receive_Amount.close(f);
+        }
+	}
+	return self;
+})();
+
+Receive_Amount = (function() {
+	var self = {
+        show: function(f) {
+            Amount.show(function(amount) {
+                Receive_Code.show(amount);
+            });
+        },
+        
+        close: function() {
+            Amount.close();
+        }
+	}
+	return self;
+})();
+
+Amount = (function() {
+	var self = {
+        isInit: false,
+        onDone: null,
+        maxAmount: null,
+        maxAmountError: null,
+        
+        init: function() {
+            self.$me = $('#amount');
+            
+            $('button.c', self.$me).click(function(e) {
+                pd(e);
+                var val = self.$me.find('input').val();
+                val = val.replace(/\,/, '.');
+                val = val.replace(/€ /, '');
+                var val_old = val;
+                
+                var c = $(this).html();
+                val += c;
+                
+                if(val.toString().match(/\.\d{3,}$/)) val = val_old;
+                
+                if(c == '0' && val.toString().match(/\.\d\d?$/)) {
+                } else {
+                    val = parseFloat(val);
+                }
+                
+                if(val == 'NAN') val = '';
+                if(val > 100) val = val_old;
+                
+                
+                val = val.toString();
+                if(val.match(/\./)) {
+//                    val = val.replace(/(\.\d)$/, '$1'+0);
+                }
+                
+                val = val.replace(/\./, ',');
+                self.$me.find('input').val('€ '+val);
+            });
+
+            $('button.dec', self.$me).click(function(e) {
+                pd(e);
+                var val = self.$me.find('input').val();                
+                val = val.replace(/\,/, '.');
+                val = val.replace(/€ /, '');
+                if(!val.match(/\./)) val = val + '.';
+                
+                val = val.replace(/\./, ',');
+                self.$me.find('input').val('€ '+val);
+            });
+
+            $('button.back', self.$me).click(function(e) {
+                pd(e);
+                var val = self.$me.find('input').val();
+                val = val.replace(/€ /, '');
+                val = val.slice(0, -1);
+                self.$me.find('input').val('€ '+val);
+            });
+            
+            $('form', self.$me).submit(function(e) {
+                pd(e);
+                var amount = $(this).find('input').val();
+                amount = amount.replace(/\,/, '.');
+                amount = amount.replace(/€ /, '');
+                
+                if(!amount) return;
+                
+                if(self.maxAmount && amount > self.maxAmount) {
+                    jAlert(self.maxAmountError);
+                } else {
+                    self.close(function() {
+                        self.onDone(amount);
+                    });
+                }
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(f, maxAmount, maxAmountError) {
+            self.onDone = f;
+            self.maxAmount = maxAmount;
+            self.maxAmountError = maxAmountError;
+            
+            if(!self.isInit) self.init();
+            
+            self.$me.find('input').val('');
+            
+            Fx.slideIn(self.$me);
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+	}
+	return self;
+})();
+
+Receive_Code = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#receive-code');
+            self.iv_waiting = null;
+            
+            $('button', self.$me).click(function(e) {
+                pd(e);
+                Header.hide();
+                self.close(function() {
+                    Home.show();
+                });
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(amount, f) {
+            if(!self.isInit) self.init();
+            
+            Fs.loading();
+            
+            Fs.postJ('BeamReceive', { amount: amount }, function(o) {
+                Fs.loading(false);
+                
+                $('.amount span', self.$me).text(formatAmount(amount));
+                
+                self.$me.find('.qr').empty();
+                var qrcode = new QRCode(self.$me.find('.qr').get(0), {
+                    width : 150,
+                    height : 150
+                });
+                qrcode.makeCode(o.bid);
+                
+                $('.id', self.$me).text(o.bid.replace(/([a-zA-Z0-9]{3})/, "$1-"));
+
+                Header.module = 'Receive_Code';
+                Fx.slideIn(self.$me, f);
+
+                self.iv_waiting = window.setInterval(function() {
+                    Fs.getJ('BeamReceive', { bid: o.bid }, function(o) {
+                        if(o) {
+                            window.clearInterval(self.iv_waiting);
+
+                            self.close(function() {
+                                Receive_Done.show({
+                                    amount: 20,
+                                    user: 123
+                                });
+                            });
+                        }
+                    });
+
+                }, 2000);
+            });
+        },
+        
+        close: function(f) {
+            if(self.iv_waiting) window.clearInterval(self.iv_waiting);
+            Fx.slideOut(self.$me, f);
+        }
+	}
+	return self;
+})();
+
+Receive_Done = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#receive-done');
+            
+            $('button', self.$me).click(function(e) {
+                pd(e);
+                Header.hide();
+                self.close(function() {
+                    Home.show();
+                });
+            });
+            
+            self.isInit = true;
+
+        },
+        
+        show: function(o, f) {
+            if(!self.isInit) self.init();
+            
+            Home.balance += o.amount;
+            
+            $('.amount span', self.$me).text(o.amount.toString().replace(/\./, ','));
+            $('.from', self.$me).text(o.user);
+            
+            Header.module = 'Receive_Done';
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function(f) {
+            Fx.slideOut(self.$me, f);
+        }
+	}
+	return self;
+})();
+
+
+Topup = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#topup-way');
+            
+            $('button', self.$me).click(function() {
+                Fx.slideOut(self.$me);
+                var target = $(this).attr('target');
+                window[$(this).attr('target')].show(function() {
+                    Header.show(
+                        target,
+                        //$('#'+target.toLowerCase()).find('.title').html()
+                        null,
+                        function() {
+                            Topup.show();
+                        }
+                    );
+                });
+            });
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+Topup_Manual = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#topup-manual');
+            
+            
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+
+Settings = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#settings');
+            
+            
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+Help = (function() {
+	var self = {
+        isInit: false,
+        
+        init: function() {
+            self.$me = $('#help');
+            
+            
+            
+            self.isInit = true;
+        },
+        
+        show: function(f) {
+            if(!self.isInit) self.init();
+            Fx.slideIn(self.$me, f);
+        },
+        
+        close: function() {
+            Fx.slideOut(self.$me);
+        }
+	}
+	return self;
+})();
+
+
+function pd(e) { e.preventDefault(); e.stopPropagation(); }
+function l(s) { console.log(s ? s : 'null');}
+
+
+Fx = (function() {
+	var self = {
+        out: function(name, $o, f) {
+            $o.removeClass().addClass(name);
+            window.setTimeout(function() {
+//            $o.off().on('animationEnd', function() {
+                $o.hide();
+                if(f) f();
+            }, 170);
+        },
+        
+        in: function(name, $o, f) {
+            $o.show().removeClass().addClass(name);
+            window.setTimeout(function() {
+//            $o.off().on('animationEnd', function() {
+                if(f) f();
+            }, 170);
+        },
+                
+        slideOut: function($o, f) {
+            window.setTimeout(function() {
+                self.out('slideOut', $o, f);
+            }, 80);
+        },
+        
+        slideIn: function($o, f) {
+            window.setTimeout(function() {
+                self.in('slideIn', $o, f);
+            }, 80);
+        }
+	}
+	return self;
+})();
+
+jWin = (function() {
+	var self = {
+		show: function($o, cb) {
+			$('#win-container')
+				.fadeIn(100)
+				.css({
+					position: 'fixed',
+					top: ($(window).height() - $o.outerHeight())/2.5
+				});
+    			$('#overlay').addClass('overlay-darker1');
+                if(cb) cb();
+		},
+		
+		close: function() {
+			$('#win-container').hide();
+			$('#overlay').removeClass('overlay-darker1').hide();
+		}
+	}
+	return self;
+})();
+
+jAlert = (function(text, cb) {
+	var $o = $('#alert').show();
+	$('div', $o).html(text);
+	$('button', $o).off().click(function() {
+		$o.hide();
+		jWin.close();
+		cb && cb();
+	})
+	jWin.show($o);
+});
+
+formatAmount = function(n) {
+    var n = parseFloat(n).toFixed(2).toString();
+    
+//    if(!n.match(/\./)) n = n + '.-';
+    return n.replace(/\.00?$/, '.-')
+//    .replace(/\.(\d)$/, ".$10")
+    .replace(/\./g, ',');
+}
+
+function cleanNumber(n, blank) {
+    if(!n) return null;
+    n = n.toString();
+    n = n.replace(/^0(1)/, '+49$1');
+    if(!n.match(/^\+49(14|15|16|17)/)) return null;
+    n = n.replace(/\D/g, '');
+    
+    if(blank) return n; else return '+'+n;
+}
+
+function syncContacts() {
+    if(IS_WEB) return;
+    l('syncing contacts');
+    
+    var options = new ContactFindOptions();
+    options.filter = "";
+    options.multiple = true;
+    var filter = ["displayName","phoneNumbers"];
+    
+    navigator.contacts.find(function(os) {
+        var contacts = {};
+        for(var i = 0; i < os.length; i++) {
+            var o = os[i];
+            
+            if(o.phoneNumbers) {
+                for(var j = 0; j < o.phoneNumbers.length; j++) {
+                    if(o.phoneNumbers[j] && o.displayName) {
+                        var n = o.phoneNumbers[j].value;
+                        n = cleanNumber(n, true);
+                        if(n) contacts['n'+n] = o.displayName;
+                    }
+                }
+            }
+        }
+        
+        localStorage.contacts = JSON.stringify(contacts);
+        
+        Fs.postJ('BeamContacts', { contacts: contacts }, function() {});
+        
+//		for(var key in contacts) {
+//            if(!contacts.hasOwnProperty(key)) continue;
+//            l(key+': '+contacts[key]);
+//        }
+
+        
+    }, function() { l('error searching'); }, filter, options);
+}
+
+initApp();

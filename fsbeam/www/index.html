@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" id="viewport" content="user-scalable=no, width=device-width" />
+<!--    device-width-->
+        <link rel="stylesheet" type="text/css" href="css/beam.css"/>
+<!--        <link rel="stylesheet/less" type="text/css" href="css/beam.less">-->
+<!--        <script src="js/less.js" type="text/javascript"></script>-->
+        <title>freisein</title>
+        <meta name="msapplication-tap-highlight" content="no" /> 
+    <style>
+@-webkit-keyframes fadeOut {
+    0%      { opacity: 1; -webkit-transform: translateY(0); }
+    100% { opacity: 0; -webkit-transform: translateY(100px) }
+}
+        
+@-webkit-keyframes fadeIn {
+    0%      { opacity: 0; -webkit-transform: translateY(100px); }
+    100% { opacity: 1; -webkit-transform: translateY(0%)); }
+}
+
+@-webkit-keyframes slideOut {
+    0%      { opacity: 1; -webkit-transform: translateX(0); }
+    100% { opacity: 0; -webkit-transform: translateX(100%) }
+}
+
+@-webkit-keyframes slideIn {
+    0%      { opacity: 0; -webkit-transform: translateX(-100%); }
+    100% { opacity: 1; -webkit-transform: translateX(0%)); }
+}
+
+@-webkit-keyframes slideOutLeft {
+    0%      { opacity: 1; -webkit-transform: translateX(0); }
+    100% { opacity: 0; -webkit-transform: translateX(-100%) }
+}
+
+@-webkit-keyframes slideInRight {
+    0%      { opacity: 0; -webkit-transform: translateX(100%); }
+    100% { opacity: 1; -webkit-transform: translateX(0%)); }
+}
+
+@keyframes fadeOut {
+    0%      { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(100px) }
+}
+        
+@keyframes fadeIn {
+    0%      { opacity: 0; transform: translateY(100px); }
+    100% { opacity: 1; transform: translateY(0%)); }
+}
+
+@keyframes slideOut {
+    0%      { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(100%) }
+}
+
+@keyframes slideIn {
+    0%      { opacity: 0; transform: translateX(-100%); }
+    100% { opacity: 1; transform: translateX(0%)); }
+}
+
+@keyframes slideOutLeft {
+    0%      { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(-100%) }
+}
+
+@keyframes slideInRight {
+    0%      { opacity: 0; transform: translateX(100%); }
+    100% { opacity: 1; transform: translateX(0%)); }
+}
+
+@-webkit-keyframes rotate {
+  from {
+      -webkit-transform: rotate(0deg);
+  }
+  to { 
+      -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate {
+  from {
+      transform: rotate(0deg);
+  }
+  to { 
+      transform: rotate(360deg);
+  }
+}
+
+/*
+@-webkit-keyframes anisend {
+    0%   { -webkit-transform: translateY(0%); }
+    100% { -webkit-transform: rotate(100deg)); }
+}
+
+@keyframes anisend {
+    0%   { transform: translateY(0%); }
+    100% { transform: rotate(100deg)); }
+}
+*/
+
+</style>
+</head>
+<body>
+    <section id="loading-overlay">
+    </section>
+
+    <section id="loading">
+        <div>✿</div>
+    </section>
+
+    <section id="overlay">
+    </section>
+
+    <section id="win-container">
+        <section id="alert" class="dn">
+            <div></div>
+            <button>OK</button>
+        </section>
+        <section id="confirm">
+            <div></div>
+            <button class="yes ok">OK</button>
+            <button class="no cancel">Abbrechen</button>
+        </section>
+    </section>
+    
+    <section id="fs-head">
+        <img src="img/flower.png">
+        <div>freisein Beam</div>
+    </section>
+    
+    <section id="number">
+        <div class="hello">
+            Hallo :-)
+        </div>
+        <section id="number-enter">
+            <p class="info">
+                Um Beam nutzen zu können, brauchst du nur deine Handy-Nummer. Gib diese nun ein:
+            </p>
+
+            <form>
+                <input type="number" value="01">
+                <button type="submit">OK</button>
+            </form>
+        </section>
+        
+        <div class="enter_code-wrapper">
+            <button class="enter_code">Bestätigungs-Code bereits erhalten</button>
+        </div>
+        
+        <section id="number-confirm">
+            <p class="info">
+                Du erhältst eine SMS mit einem Bestätigungs-Code.<br>
+                Gib diesen nun ein:
+            </p>
+
+            <form>
+                <input type="number">
+                <button type="submit">OK</button>
+            </form>
+        </section>
+    </section>
+
+    <header>
+        <a class="back"><!--◀--></a>
+        <h1></h1>
+    </header>
+
+    <section id="home">
+        <div class="balance">€ <span></span></div>
+<!--☼-->
+        
+        <div class="send" target="Send">
+            <div class="send-arrow"></div>
+            <button class="send">Senden</button>
+        </div>
+        
+        <div class="receive" target="Receive">
+            <div class="receive-arrow"></div>
+            <button class="receive">Empfangen</button>
+        </div>
+        
+        <table>
+            <tr>
+                <td colspan="3" class="news" target="News">Neuigkeiten</td>
+            </tr>
+            <tr>
+                <td class="topup" target="Topup"><span>↺</span> Aufladen</td>
+                <td class="help" target="Help">? Hilfe</td>
+                <td class="more" target="More">· · ·</td>
+            </tr>
+        </table>
+
+<!--
+        <button class="news" target="News">Neuigkeiten</button>
+        <button class="topup" target="Topup"><span>↺</span> Aufladen</button>
+        <button class="help" target="Help">? Hilfe</button>
+        <button class="more" target="More"><span>· · ·</button>
+-->
+<!--        <button class="transactions" target="Transactions"><span>⇵</span> Umsätze</button>-->
+<!--        <button class="topdown" target="Topdown"><span>⇟</span> Auszahlen</button>-->
+<!--        <br>-->
+<!--        <button class="settings" target="Settings"><span>⚙</span> Einstellungen</button>-->
+    </section>
+    
+    <section id="more">
+        <button class="transactions" target="Transactions"><span class="icon">⇵</span> Umsätze</button>
+        <button class="topdown" target="Topdown"><span class="icon">⇟</span> Auszahlen</button>
+        <button class="settings" target="Settings"><span class="icon">⚙</span> Einstellungen</button>
+    </section>
+    
+    <section id="news">
+        <span class="dn title">Neuigkeiten</span>
+        
+        <div class="empty">
+            <h2>Es gibt noch keine Neuigkeiten.</h2>
+            <small>Beam-Aktivitäten deiner Freunde werden hier angezeigt.</small>
+        </div>
+
+<!--
+        <table></table>
+        
+        <table class="dn">
+        <tr id="t-news">
+            <td>
+            </td>
+        </tr>
+        </table>
+-->
+        <ul></ul>
+        
+        <li id="t-news" class="dn">
+<!--            <img>-->
+<!--            <<span class="dot">●</span>-->
+            <span class="name"></span>
+            <span class="amount">€&nbsp;<span></span></span>
+            <span class="text"></span>
+        </li>
+    </section>
+    
+    <section id="transactions">
+        <span class="dn title">Umsätze</span>
+
+        <div class="empty">
+            <h2>Es gibt noch keine Umsätze.</h2>
+            <small>Wenn du etwas gesendet oder empfangen hast, wird es hier angezeigt.</small>
+        </div>
+        
+        <ul></ul>
+        
+        <li id="t-transaction" class="dn">
+            <table>
+                <tr>
+                    <td class="type"><div>⇧</div></td>
+                    <td class="name"></td>
+                    <td class="amount">€&nbsp;<span class="amount"></span></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2" class="date"></td>
+                </tr>
+            </table>
+<!--
+            <div class="type"><div>⇧</div></div>
+            <span class="amount">€&nbsp;<span class="amount"></span></span>
+            <span class="name"></span>
+            <div class="date"></div>
+-->
+        </li>
+
+<!--
+        <table></table>
+        
+        <table class="dn">
+        <tr id="t-transaction">
+            <td class="type"><div>⇧</div></td>
+            <td class="amount">€&nbsp;<span class="amount"></span></td>
+            <td class="name"></td>
+            <td class="date"></td>
+        </tr>
+        </table>
+-->
+    </section>
+    
+    <section id="send">
+        <span class="title dn">Senden</span>
+    </section>
+    
+        <section id="send-way">
+            <span class="title dn">Senden</span>
+        
+            <button class="id" target="Send_Contact"><span class="icon">♟</span> aus Kontakten wählen</button>
+            <button class="qr" target="Send_Qr"><span class="icon">▣</span> per QR-Code</button><br>
+            <button class="id" target="Send_Id"><span class="icon">Ω</span> per Beam-ID</button><br>
+        </section>
+
+        <section id="send-qr">
+<!--            <span class="title dn">Senden - per QR-Code</span>-->
+        </section>
+        
+        <section id="send-id">
+<!--            <span class="title dn">Senden - per Beam-ID</span>-->
+            <form>
+                <p>Gib die Beam-ID ein, so wie sie auf dem Gerät des Empfängers angezeigt wird.</p>
+                <input type="text" size="8" maxlength="7">
+                <br>
+                <button type="submit">Weiter</button>
+            </form>
+        </section>
+        
+        <section id="send-contact">
+<!--            <span class="title dn">Senden - an Kontakt</span>-->
+            <ul></ul>
+            <li class="dn t-contact">
+                <img>
+                <span class="name"></span>
+            </li>
+            
+<!--
+            <input type="text">
+            <button>weiter</button>
+-->
+        </section>
+        
+        <section id="send-confirm">
+            <div class="amount">€ <span></span></div>
+            <p>an</p>
+            <div class="name"></div>
+            <div class="number"></div>
+            <p>senden?</p>
+            
+            <form>
+                <button class="ok">OK</button>
+                <button class="cancel">Abbrechen</button>
+            </form>
+        </section>
+        
+        <section id="send-done">
+            Gesendet!
+            <br><br>
+            <button>OK</button>
+        </section>
+    
+        <section id="receive">
+            <span class="title dn">Empfangen</span>
+        </section>
+
+        <section id="receive-amount">
+            <span class="title dn">Empfangen</span>
+        </section>
+
+        <section id="amount">
+            <h2>Betrag</h2>
+            
+            <form>
+                <table>
+                    <tr>
+                        <td><button class="c tl">1</button></td>
+                        <td><button class="c">2</button></td>
+                        <td><button class="c tr">3</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="c">4</button></td>
+                        <td><button class="c">5</button></td>
+                        <td><button class="c">6</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="c">7</button></td>
+                        <td><button class="c">8</button></td>
+                        <td><button class="c">9</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="c bl">0</button></td>
+                        <td><button class="dec">,</button></td>
+                        <td><button class="back br">←</button></td>
+                    </tr>
+                </table>
+                <input type="text" size="4" maxlength="8" readonly>
+                <button type="submit">OK</button>
+            </form>
+        </section>
+
+        <section id="pin">
+            <h2>PIN</h2>
+            
+            <form>
+                <table>
+                    <tr>
+                        <td><button class="c tl">1</button></td>
+                        <td><button class="c">2</button></td>
+                        <td><button class="c tr">3</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="c">4</button></td>
+                        <td><button class="c">5</button></td>
+                        <td><button class="c">6</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="c">7</button></td>
+                        <td><button class="c">8</button></td>
+                        <td><button class="c">9</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="c bl">0</button></td>
+                        <td><button class="dec">,</button></td>
+                        <td><button class="back br">←</button></td>
+                    </tr>
+                </table>
+                <button type="submit">OK</button>
+            </form>
+        </section>
+   
+        <section id="receive-code">
+            <div class="amount">€ <span></span></div>
+            
+            <p class="info">
+                Sender: Scanne QR-Code!
+            </p>
+            <div class="qr"></div>
+            
+            Oder tippe Beam-ID:
+            <div class="id">
+            </div>
+
+            <div class="waiting">
+                Warten auf Empfang
+                <div>✿</div>
+            </div>
+
+            <div class="bottom-wrapper">
+                <button class="cancel">Abbrechen</button>
+            </div>
+            
+        </section>
+        
+        <section id="receive-done">
+            <div class="amount">€ <span></span></div>
+            <p class="info">erhalten von</p>
+            <div class="name"></div>
+            <div class="number"></div>
+                        
+            <div class="bottom-wrapper">
+                <button>Fertig</button>
+            </div>
+        </section>
+
+        <section id="topup">
+            <span class="title dn">Aufladen</span>
+        </section>
+    
+        <section id="topup-way">
+            <span class="title dn">Aufladen</span>
+            
+            <button class="sofort">mit SOFORT-Überweisung</button>
+            <button class="paypal">mit PayPal</button>
+<!--            <button target="Topup_Manual">mit manueller Überweisung</button>-->
+        </section>
+    
+        <section id="topup-auto">
+            <button>OK</button>
+        </section>
+        
+        <section id="topup-manual">
+            <span class="title dn">Aufladen | manuelle Überweisung</span>
+            
+            Überweise den Betrag, den du aufladen möchtest, an:<br>
+            <br>
+            Empfänger: freisein.de<br>
+            IBAN: DE14290501010080936586<br>
+            BIC: SBREDE22XXX (Sparkasse Bremen)<br>
+            Verwendungszweck: <span class="ref"></span><br>
+            <br>
+            Erwarte eine Bearbeitungszeit von je nach Bank um die 3 Tage.<br>
+            <br>
+            Du erhältst eine SMS, sobald dein Beam-Konto aufgeladen ist.
+        </section>        
+
+    <section id="topdown">
+        <span class="title dn">Auszahlen</span>
+        <button target="Topdown_Bank">per Überweisung an ein Bankkonto</button>
+        <button target="Topdown_Paypal">an ein PayPal-Konto</button>
+    </section>
+
+    <section id="topdown-paypal">
+        <span class="title dn">Auszahlen</span>
+        <form>
+            <p>Gib deinen PayPal-Kontonamen ein:</p>
+
+            <input type="text" name="user" placeholder="">
+            <br>
+            <button type="submit">Weiter</button>
+        </form>
+    </section>
+
+    <section id="topdown-bank">
+        <span class="title dn">Auszahlen</span>
+        <form>
+            <p>Gib deine Bankkonto-Details ein:</p>
+
+            <input type="text" name="kto" placeholder="Kontonummer">
+            <input type="text" name="blz" placeholder="Bankleitzahl">
+            <input type="text" name="owner" placeholder="Name des Inhabers">
+            <br>
+            <button type="submit">Weiter</button>
+        </form>
+    </section>
+
+    <section id="topdown-done">
+        <p>
+            Okay, dein Auszahlungsauftrag wird jetzt bearbeitet.
+        </p>
+        <button>OK</button>
+    </section>
+
+    <section id="settings">
+        <span class="title dn">Einstellungen</span>
+        
+<!--
+        <label>
+            <input type="checkbox" name="is_merchant">&nbsp;Händler-Modus
+        </label>
+        <div class="info">
+            Im Händler-Modus ist nur Empfang möglich, der Kontostand wird nicht angezeigt.
+        </div>
+-->
+        
+        <button class="pin">PIN festlegen</button>
+        <button class="pin-delete dn">PIN löschen</button>
+        <div class="info">
+            Ändert die PIN, die zum Starten der App eingegeben werden muss.
+        </div>
+    </section>
+
+    <section id="help">
+        <button class="cur" target="faq">Fragen und Antworten</button>
+        <button target="contact">Kontakt</button>
+        <button target="merchant">Für Händler</button>
+        
+        <section class="faq" style="display:block">
+            <h2>Was ist freisein Beam?</h2>
+            <p>freisein Beam ist eine einfache Möglichkeit, Geld zu senden oder zu erhalten. Du kannst jemandem einen Betrag schicken, wenn du dessen Handynummer kennst. Oder du kannst einen Betrag von jemandem empfangen.</p>
+
+            <h2>Wie funktioniert das Senden?</h2>
+            <p>Du wählst den Empfänger aus deinen Kontakten, gibst den Betrag ein und fertig. Der Empfänger bekommt eine SMS und erhält den Betrag sofort in seiner App.</p>
+            <p>Du kannst auch einen QR-Code abscannen oder eine Beam-ID eingeben. Diese werden in der Beam-App von jemand anderem angezeigt, wenn dieser einen Betrag erhalten möchte.</p>
+
+            <h2>Wie funktioniert das Empfangen?</h2>
+            <p>Du gibst den Betrag ein, den du erhalten möchtest. Daraufhin wird ein QR-Code angezeigt. Dein Freund scannt diesen mit seiner Beam-App, bestätigt das Senden und fertig. Du erhältst den Betrag sofort in deiner App.</p>
+
+            <h2>Was kostet was?</h2>
+            <p>Senden kostet nur 1% plus 10 Cent. Verschickst du 20 Euro, sind das also 20 Cent + 10 Cent = 30 Cent Gebühren, mehr nicht. Wenig, oder? Der Empfänger zahlt gar nichts. Und sonstige Kosten gibt es nicht.</p>
+<!--            <p>Tip: Wenn du 20 Euro verschickst und nur noch genau 20 Euro Guthaben hast, kannst du trotzdem senden. Die Gebühren werden erst später verrechnet, wenn dein Konto wieder aufgeladen ist.</p>-->
+            
+            <h2>Gibt es Limits?</h2>
+            <p>Ja, eine Transaktion ist derzeit auf mindestens 1 und maximal 100 Euro beschränkt. Der Mindestbetrag zum Auszahlen beträgt 10 Euro.</p>
+
+            <h2>Wie sicher ist Beam?</h2>
+            <p>Sehr, sehr sicher. Dein Beam-Konto ist mit deiner Handy-Nummer verknüpft. Dein Geld liegt sozusagen in deinem Smartphone wie dein Geldbeutel in deiner Tasche. Nur viel sicherer:</p>
+            <p>• Du kannst die Beam-App vor fremdem Zugriffen mit einer PIN schützen.</p>
+            <p>• Du entscheidest selbst, mit wieviel Guthaben du dein Beam-Konto auflädst und kannst jederzeit wieder Geld abbuchen.</p>
+            <p>• Selbst wenn dein Handy verloren gehen und jemand Zugang zu deiner Beam-App bekommen sollte: Wir können natürlich alle ungewollten Transaktionen sofort nachvollziehen und einen solchen Missbrauch stornieren.</p>
+            <p>• Im Hintergrund arbeiten übrigens Hochleistungs-Server in einem rund um die Uhr überwachten Rechenzentrum in Deutschland. Alle Vorgänge werden mit Industriestandards verschlüsselt.</p>
+
+            <h2>Wie kann ich mein Konto aufladen?</h2>
+            <p>Du kannst per SOFORT-Überweisung von deinem Bankkonto oder per PayPal (Lastschrift, Kreditkarte) aufladen. Dein neues Guthaben ist gleich danach in deiner Beam-App sichtbar.</p>
+
+            <h2>Wie kann ich einen Betrag auszahlen lassen?</h2>
+            <p>Du kannst einen Betrag per Überweisung an dein Bankkonto oder an dein PayPal-Konto auszahlen lassen.</p>
+        </section>
+        
+        <section class="merchant">
+            <h2>Kann ich Beam als Händler nutzen?</h2>
+            <p>Ja. Ein simples Smartphone wird zum Empfangsgerät für deine Einnahmen. Mehr brauchst du nicht.</p>
+            <p>In einem Händer-Konto ist das Senden und andere Funktionen deaktiviert, damit nur empfangen werden kann.</p>
+            <p>Der Käufer sieht bei einer Zahlung deinen Firmennamen samt Logo.</p>
+                        
+            <h2>Was kostet es?</h2>
+            <p>Nichts. Es gibt keine monatlichen Kosten. Die Transaktionsgebühren sind für den Sender die gleichen, als Händler zahlst du keine Gebühren.</p>
+            
+            <h2>Wie lege ich los?</h2>
+            <p>Schreibe an <a href="mailto:beam@freisein.de">beam@freisein.de</a> für die Umstellung auf ein Händler-Konto.</p>
+        </section>
+        
+        <section class="contact">
+            <h2>Kontakt</h2>
+            <p>Für Fragen, Kritik, Verbesserungsvorschläge etc. kontaktiere uns bitte. Wir wollen alles wissen.</p>
+            <p>Schreibe an <a href="mailto:beam@freisein.de">beam@freisein.de</a>.</p>
+        </section>
+        
+        <span class="title dn">Hilfe</span>
+    </section>
+    
+    <script src="phonegap.js"></script>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.transit.min.js"></script>
+    <script src="js/qrcode.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/lang/de.js"></script>
+    <script src="js/beam.js"></script>
+
+<script>
+function onDeviceReady() {
+	$(document).ready(function() {
+		initApp();
+	});
+}
+
+document.addEventListener('deviceready', onDeviceReady, false);
+
+document.addEventListener("backbutton", function() {
+	Header.back();
+}, false);
+</script>
+
+</body>
+</html>
