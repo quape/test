@@ -1,7 +1,0 @@
-Z:\app\fsbeam\platforms\wp8\obj\Debug\App.g.cs
-Z:\app\fsbeam\platforms\wp8\obj\Debug\Plugins\com.kolwit.pickcontact\PickContactPicker.g.cs
-Z:\app\fsbeam\platforms\wp8\obj\Debug\Plugins\com.phonegap.plugins.barcodescanner\Scanner.g.cs
-Z:\app\fsbeam\platforms\wp8\obj\Debug\Plugins\org.apache.cordova.contacts\ContactPicker.g.cs
-Z:\app\fsbeam\platforms\wp8\obj\Debug\cordovalib\CordovaView.g.cs
-Z:\app\fsbeam\platforms\wp8\obj\Debug\MainPage.g.cs
-Z:\app\fsbeam\platforms\wp8\obj\Debug\com.freisein.beam.g.resources
